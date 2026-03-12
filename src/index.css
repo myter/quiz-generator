@@ -1,0 +1,140 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap');
+@import "tailwindcss" important;
+
+@theme {
+  --font-satoshi: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --color-wv-bg: #f9f7fc;
+  --color-wv-primary: #310080;
+  --color-wv-accent: #6200ff;
+  --color-wv-text: #140033;
+  --color-wv-muted: rgba(20, 0, 51, 0.55);
+  --color-wv-border: rgba(20, 0, 51, 0.12);
+  --color-wv-border-strong: rgba(20, 0, 51, 0.2);
+  --color-wv-card: #ffffff;
+  --color-wv-input-bg: #f9f7fc;
+  --color-wv-green: #16a34a;
+  --color-wv-red: #dc2626;
+  --color-wv-accent-light: rgba(98, 0, 255, 0.08);
+  --color-wv-accent-mid: rgba(98, 0, 255, 0.15);
+}
+
+/* Scoped CSS reset — prevents Webflow style leakage */
+#quiz-generator *,
+#quiz-generator *::before,
+#quiz-generator *::after {
+  box-sizing: border-box !important;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+  line-height: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+#quiz-generator {
+  font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #140033;
+  -webkit-font-smoothing: antialiased;
+}
+
+#quiz-generator button {
+  cursor: pointer;
+  background: none;
+  line-height: inherit;
+}
+
+#quiz-generator select {
+  appearance: auto;
+}
+
+#quiz-generator a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* CTA Glow Button */
+#quiz-generator .cta-glow-wrapper {
+  position: relative;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(135deg, #00d4ff, #6200ff, #b000ff);
+  box-shadow:
+    0 0 16px rgba(98, 0, 255, 0.2),
+    0 0 32px rgba(0, 212, 255, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+#quiz-generator .cta-glow-wrapper:hover:not(.disabled) {
+  box-shadow:
+    0 0 20px rgba(98, 0, 255, 0.35),
+    0 0 40px rgba(0, 212, 255, 0.18);
+}
+
+#quiz-generator .cta-glow-wrapper.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#quiz-generator .cta-glow-inner {
+  display: block;
+  background: white;
+  border-radius: 10px;
+  padding: 12px 24px;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+#quiz-generator .cta-glow-wrapper:hover:not(.disabled) .cta-glow-inner {
+  background: #faf8ff;
+}
+
+/* Range slider */
+#quiz-generator input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-wv-accent-mid);
+  outline: none;
+  width: 100%;
+}
+
+#quiz-generator input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-wv-accent);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+#quiz-generator input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-wv-accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#quiz-generator .spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(98, 0, 255, 0.2);
+  border-top-color: #6200ff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}

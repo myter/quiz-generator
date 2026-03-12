@@ -1,0 +1,11 @@
+services:
+  quiz-generator:
+    container_name: quiz-generator
+    build: .
+    ports:
+      - "3002:3002"
+    env_file:
+      - .env
+    environment:
+      - PORT=3002
+    restart: unless-stopped
