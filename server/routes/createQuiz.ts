@@ -72,6 +72,7 @@ router.post('/create-quiz-anon', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Origin': 'https://quiz-shadow.weavely.ai',
       },
       body: JSON.stringify({
         name: body.name || 'Generated Quiz (Copy)',
@@ -85,7 +86,7 @@ router.post('/create-quiz-anon', async (req, res) => {
 
     if (!weaveyRes.ok) {
       const errBody = await weaveyRes.text()
-      console.error('Weavely API error (anon):', weaveyRes.status, errBody)
+      console.error('Weavely API error (anon):', weaveyRes.status, errBody, JSON.stringify(body).slice(0, 500))
       res.status(502).json({ error: 'Failed to create anonymous quiz copy' })
       return
     }
