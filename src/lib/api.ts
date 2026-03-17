@@ -78,10 +78,19 @@ export async function createQuizAnon(payload: {
   settings: object
   logicRules?: object[]
 }): Promise<{ formId: string; editorUrl: string }> {
-  const res = await fetch(`${_apiUrl}/api/create-quiz-anon`, {
+  // Call Weavely API directly from browser — no auth headers.
+  // Works because the page is on a *.weavely.ai domain.
+  const res = await fetch('https://api.weavely.ai/v1/forms', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      name: payload.name || 'Generated Quiz (Copy)',
+      publish: true,
+      formJSON: payload.formJSON,
+      themeJSON: payload.themeJSON,
+      settings: payload.settings,
+      logicRules: payload.logicRules || [],
+    }),
   })
 
   if (!res.ok) {
@@ -89,7 +98,11 @@ export async function createQuizAnon(payload: {
     throw new Error(err.error || `Anon quiz creation failed (${res.status})`)
   }
 
-  return res.json()
+  const data = await res.json()
+  return {
+    formId: data.id,
+    editorUrl: data.url,
+  }
 }
 
 async function extractTextFromPdf(file: File, selectedPages: number[]): Promise<string> {
