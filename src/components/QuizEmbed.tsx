@@ -51,19 +51,35 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
 
       {/* Full-width bottom banner — stacks on mobile */}
       <div
-        className="relative w-full shrink-0 overflow-hidden"
         style={{
+          position: 'relative',
+          width: '100%',
+          flexShrink: 0,
           background: 'linear-gradient(to right, #c8a2f5, #6200ff, #1A1A1A)',
         }}
       >
-        <div className="flex flex-col sm:flex-row items-center gap-3 px-4 sm:px-10 py-3 sm:py-5">
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '12px 16px',
+            textAlign: 'center',
+          }}
+        >
           {/* Text */}
-          <h3 className="text-white font-bold text-[16px] sm:text-[22px] leading-tight text-center sm:text-left">
-            Tweak, publish & share this quiz for free
+          <h3
+            style={{
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: '14px',
+              lineHeight: 1.3,
+              margin: 0,
+            }}
+          >
+            Tweak, publish &amp; share this quiz for free
           </h3>
-
-          {/* Spacer — only on desktop */}
-          <div className="hidden sm:block flex-1" />
 
           {/* CTA button */}
           <button
@@ -72,7 +88,10 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
             className={`cta-glow-wrapper banner-cta-pulse block shrink-0 ${busy ? 'disabled' : ''}`}
           >
             <div className="glow-bg" />
-            <span className="cta-glow-inner text-[14px] sm:text-[16px] flex items-center justify-center gap-2 whitespace-nowrap">
+            <span
+              className="cta-glow-inner flex items-center justify-center gap-2"
+              style={{ fontSize: '14px', whiteSpace: 'nowrap', padding: '8px 20px' }}
+            >
               {busy && (
                 <span
                   className="inline-block w-4 h-4 border-2 rounded-full animate-spin shrink-0"
@@ -85,7 +104,7 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
         </div>
 
         {error && (
-          <p className="text-sm text-red-200 px-4 pb-2 text-center">{error}</p>
+          <p style={{ fontSize: '13px', color: '#fecaca', padding: '0 16px 8px', textAlign: 'center', margin: 0 }}>{error}</p>
         )}
       </div>
     </div>
