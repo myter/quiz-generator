@@ -12,9 +12,20 @@ interface Props {
   }
 }
 
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 640)
+  useEffect(() => {
+    const onResize = () => setIsDesktop(window.innerWidth >= 640)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  return isDesktop
+}
+
 export default function QuizEmbed({ formUrl, quizPayload }: Props) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const isDesktop = useIsDesktop()
 
   // Lock body scroll when overlay is mounted
   useEffect(() => {
@@ -49,7 +60,7 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
         allow="clipboard-write"
       />
 
-      {/* Full-width bottom banner — stacks on mobile */}
+      {/* Full-width bottom banner */}
       <div
         style={{
           position: 'relative',
@@ -61,11 +72,11 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: isDesktop ? 'row' : 'column',
             alignItems: 'center',
-            gap: '10px',
-            padding: '12px 16px',
-            textAlign: 'center',
+            gap: isDesktop ? '16px' : '10px',
+            padding: isDesktop ? '20px 40px' : '12px 16px',
+            textAlign: isDesktop ? 'left' : 'center',
           }}
         >
           {/* Text */}
@@ -73,13 +84,22 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
             style={{
               color: '#fff',
               fontWeight: 700,
-              fontSize: '14px',
+              fontSize: isDesktop ? '22px' : '14px',
               lineHeight: 1.3,
               margin: 0,
+              flexShrink: 0,
             }}
           >
             Tweak, publish &amp; share this quiz for free
           </h3>
+
+          {/* Spacer — desktop only */}
+          {isDesktop && <div style={{ flex: 1 }} />}
+
+          {/* Error — desktop inline */}
+          {error && isDesktop && (
+            <p style={{ fontSize: '14px', color: '#fecaca', margin: 0 }}>{error}</p>
+          )}
 
           {/* CTA button */}
           <button
@@ -90,7 +110,11 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
             <div className="glow-bg" />
             <span
               className="cta-glow-inner flex items-center justify-center gap-2"
-              style={{ fontSize: '14px', whiteSpace: 'nowrap', padding: '8px 20px' }}
+              style={{
+                fontSize: isDesktop ? '16px' : '14px',
+                whiteSpace: 'nowrap',
+                padding: isDesktop ? '12px 24px' : '8px 20px',
+              }}
             >
               {busy && (
                 <span
@@ -103,7 +127,8 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
           </button>
         </div>
 
-        {error && (
+        {/* Error — mobile below */}
+        {error && !isDesktop && (
           <p style={{ fontSize: '13px', color: '#fecaca', padding: '0 16px 8px', textAlign: 'center', margin: 0 }}>{error}</p>
         )}
       </div>
