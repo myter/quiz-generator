@@ -101,7 +101,7 @@ export async function createQuizAnon(payload: {
   const data = await res.json()
   return {
     formId: data.id,
-    editorUrl: data.url,
+    editorUrl: data.editor,
   }
 }
 
