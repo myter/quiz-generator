@@ -58,10 +58,16 @@ router.post('/create-quiz', async (req, res) => {
   }
 })
 
-// Anonymous copy — no auth, no team. Works because server is on *.weavely.ai domain
+// Anonymous copy — uses API token but no teamId, so form is unowned
 router.post('/create-quiz-anon', async (req, res) => {
   try {
     const body = req.body as CreateQuizRequest
+    const token = process.env.WEAVELY_API_TOKEN
+
+    if (!token) {
+      res.status(500).json({ error: 'Server misconfigured: missing Weavely credentials' })
+      return
+    }
 
     if (!body.formJSON || !body.themeJSON) {
       res.status(400).json({ error: 'Missing formJSON or themeJSON' })
@@ -72,7 +78,7 @@ router.post('/create-quiz-anon', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://quiz-shadow.weavely.ai',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({
         name: body.name || 'Generated Quiz (Copy)',
