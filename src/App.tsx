@@ -86,10 +86,12 @@ function reducer(state: State, action: Action): State {
 
 interface AppProps {
   apiUrl?: string
+  defaultTab?: string
 }
 
-export default function App({ apiUrl = '' }: AppProps) {
-  const [state, dispatch] = useReducer(reducer, initialState)
+export default function App({ apiUrl = '', defaultTab = 'text' }: AppProps) {
+  const validTab = (['text', 'pdf', 'docx', 'googleDoc'].includes(defaultTab) ? defaultTab : 'text') as InputMode
+  const [state, dispatch] = useReducer(reducer, { ...initialState, inputMode: validTab })
 
   useEffect(() => {
     if (apiUrl) setApiUrl(apiUrl)
