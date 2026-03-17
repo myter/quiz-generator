@@ -27,12 +27,35 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
   const [error, setError] = useState<string | null>(null)
   const isDesktop = useIsDesktop()
 
-  // Lock body scroll when overlay is mounted
+  // Lock body scroll when overlay is mounted (including iOS Safari)
   useEffect(() => {
-    const original = document.body.style.overflow
+    const origBody = document.body.style.overflow
+    const origHtml = document.documentElement.style.overflow
+    const origPos = document.body.style.position
+    const origTop = document.body.style.top
+    const origWidth = document.body.style.width
+    const scrollY = window.scrollY
+
     document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+    document.documentElement.style.overflow = 'hidden'
+
+    const preventTouch = (e: TouchEvent) => {
+      if ((e.target as HTMLElement)?.closest('iframe')) return
+      e.preventDefault()
+    }
+    document.addEventListener('touchmove', preventTouch, { passive: false })
+
     return () => {
-      document.body.style.overflow = original
+      document.body.style.overflow = origBody
+      document.body.style.position = origPos
+      document.body.style.top = origTop
+      document.body.style.width = origWidth
+      document.documentElement.style.overflow = origHtml
+      document.removeEventListener('touchmove', preventTouch)
+      window.scrollTo(0, scrollY)
     }
   }, [])
 
