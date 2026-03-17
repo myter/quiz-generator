@@ -23,10 +23,10 @@ export default function QuizConfig({ config, onChange }: Props) {
       {/* Number of questions */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-wv-text">
+          <label className="text-[20px] font-medium text-wv-text">
             Number of questions
           </label>
-          <span className="text-sm font-semibold text-wv-accent tabular-nums">
+          <span className="text-[20px] font-semibold text-wv-accent tabular-nums">
             {config.numQuestions}
           </span>
         </div>
@@ -37,7 +37,7 @@ export default function QuizConfig({ config, onChange }: Props) {
           value={config.numQuestions}
           onChange={e => onChange({ ...config, numQuestions: Number(e.target.value) })}
         />
-        <div className="flex justify-between text-xs text-wv-muted mt-0.5">
+        <div className="flex justify-between text-[16px] text-wv-muted mt-0.5">
           <span>1</span>
           <span>20</span>
         </div>
@@ -45,7 +45,7 @@ export default function QuizConfig({ config, onChange }: Props) {
 
       {/* Question types */}
       <div>
-        <label className="block text-sm font-medium text-wv-text mb-2">
+        <label className="block text-[20px] font-medium text-wv-text mb-2">
           Question type
         </label>
         <div className="flex flex-wrap gap-2">
@@ -53,7 +53,7 @@ export default function QuizConfig({ config, onChange }: Props) {
             <button
               key={opt.key}
               onClick={() => onChange({ ...config, questionTypes: opt.key })}
-              className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
+              className={`px-3 py-1.5 text-[16px] rounded-full transition-colors ${
                 config.questionTypes === opt.key
                   ? 'bg-wv-primary text-white'
                   : 'bg-wv-accent-light text-wv-text hover:bg-wv-accent-mid'
@@ -67,7 +67,7 @@ export default function QuizConfig({ config, onChange }: Props) {
 
       {/* Page layout */}
       <div>
-        <label className="block text-sm font-medium text-wv-text mb-2">
+        <label className="block text-[20px] font-medium text-wv-text mb-2">
           Page layout
         </label>
         <div className="flex flex-wrap gap-2">
@@ -75,7 +75,7 @@ export default function QuizConfig({ config, onChange }: Props) {
             <button
               key={opt.key}
               onClick={() => onChange({ ...config, pageLayout: opt.key })}
-              className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
+              className={`px-3 py-1.5 text-[16px] rounded-full transition-colors ${
                 config.pageLayout === opt.key
                   ? 'bg-wv-primary text-white'
                   : 'bg-wv-accent-light text-wv-text hover:bg-wv-accent-mid'
@@ -89,7 +89,7 @@ export default function QuizConfig({ config, onChange }: Props) {
         {/* Custom page count */}
         {config.pageLayout === 'custom' && (
           <div className="mt-2 flex items-center gap-2">
-            <label className="text-xs text-wv-muted">Pages:</label>
+            <label className="text-[16px] text-wv-muted">Pages:</label>
             <input
               type="number"
               min={1}
@@ -99,7 +99,7 @@ export default function QuizConfig({ config, onChange }: Props) {
                 ...config,
                 customPageCount: Math.max(1, Math.min(Number(e.target.value), config.numQuestions)),
               })}
-              className="w-16 px-2 py-1 border border-wv-border rounded-lg text-sm text-wv-text bg-wv-input-bg focus:outline-none focus:ring-2 focus:ring-wv-accent/40 focus:border-wv-accent transition-colors text-center"
+              className="w-16 px-2 py-1 border border-wv-border rounded-lg text-[20px] text-wv-text bg-wv-input-bg focus:outline-none focus:ring-2 focus:ring-wv-accent/40 focus:border-wv-accent transition-colors text-center"
             />
           </div>
         )}

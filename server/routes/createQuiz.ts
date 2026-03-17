@@ -48,7 +48,8 @@ router.post('/create-quiz', async (req, res) => {
     const data = await weaveyRes.json()
     res.json({
       formId: data.id,
-      formUrl: data.url,
+      editorUrl: data.url,
+      formUrl: `https://forms.weavely.ai/${data.id}`,
     })
   } catch (err) {
     console.error('Create quiz error:', err)

@@ -1,5 +1,6 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { InputMode } from '../lib/types'
+import PdfPagePicker from './PdfPagePicker'
 
 const EXAMPLE_PROMPT = 'Create a quiz about the solar system covering planets, their order from the sun, notable features like rings or moons, and basic facts about the sun.'
 
@@ -9,10 +10,12 @@ interface Props {
   inputMode: InputMode
   content: string
   file: File | null
+  selectedPages: number[]
   googleDocUrl: string
   onInputModeChange: (mode: InputMode) => void
   onContentChange: (val: string) => void
   onFileChange: (file: File | null) => void
+  onSelectedPagesChange: (pages: number[]) => void
   onGoogleDocUrlChange: (url: string) => void
 }
 
@@ -20,19 +23,52 @@ export default function ContextInput({
   inputMode,
   content,
   file,
+  selectedPages,
   googleDocUrl,
   onInputModeChange,
   onContentChange,
   onFileChange,
+  onSelectedPagesChange,
   onGoogleDocUrlChange,
 }: Props) {
-  const fileRef = useRef<HTMLInputElement>(null)
+  const pdfFileRef = useRef<HTMLInputElement>(null)
+  const docxFileRef = useRef<HTMLInputElement>(null)
+  const [dragging, setDragging] = useState(false)
 
   const modes: { key: InputMode; label: string }[] = [
     { key: 'text', label: 'Text' },
     { key: 'pdf', label: 'PDF' },
+    { key: 'docx', label: 'Word' },
     { key: 'googleDoc', label: 'Google Doc' },
   ]
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragging(true)
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragging(false)
+  }
+
+  function handleDrop(e: React.DragEvent, accept: string) {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragging(false)
+    const droppedFile = e.dataTransfer.files?.[0]
+    if (droppedFile && droppedFile.name.endsWith(accept)) {
+      onFileChange(droppedFile)
+    }
+  }
+
+  function handleRemovePdf() {
+    onFileChange(null)
+    onSelectedPagesChange([])
+    if (pdfFileRef.current) pdfFileRef.current.value = ''
+  }
 
   return (
     <div className="space-y-3">
@@ -42,7 +78,7 @@ export default function ContextInput({
           <button
             key={m.key}
             onClick={() => onInputModeChange(m.key)}
-            className={`px-3 py-1 text-xs rounded-full transition-colors ${
+            className={`px-3 py-1 text-[16px] rounded-full transition-colors ${
               inputMode === m.key
                 ? 'bg-wv-primary text-white'
                 : 'bg-wv-accent-light text-wv-text hover:bg-wv-accent-mid'
@@ -57,12 +93,12 @@ export default function ContextInput({
       {inputMode === 'text' && (
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-sm font-medium text-wv-text">
+            <label className="block text-[20px] font-medium text-wv-text">
               Describe your quiz topic or paste content
             </label>
             <button
               onClick={() => onContentChange(EXAMPLE_PROMPT)}
-              className="text-xs text-wv-accent hover:underline"
+              className="text-[16px] text-wv-accent hover:underline"
             >
               Try example
             </button>
@@ -72,30 +108,81 @@ export default function ContextInput({
             onChange={e => onContentChange(e.target.value.slice(0, MAX_CHARS))}
             placeholder="e.g. A quiz about World War II focusing on key battles and dates..."
             rows={4}
-            className="w-full px-3 py-2.5 border border-wv-border rounded-xl text-sm text-wv-text bg-wv-input-bg focus:outline-none focus:ring-2 focus:ring-wv-accent/40 focus:border-wv-accent transition-colors resize-none"
+            className="w-full px-3 py-2.5 border border-wv-border rounded-xl text-[20px] text-wv-text bg-wv-input-bg focus:outline-none focus:ring-2 focus:ring-wv-accent/40 focus:border-wv-accent transition-colors resize-none"
           />
-          <p className="text-xs text-wv-muted text-right mt-0.5">
+          <p className="text-[16px] text-wv-muted text-right mt-0.5">
             {content.length}/{MAX_CHARS}
           </p>
         </div>
       )}
 
-      {/* PDF upload */}
+      {/* PDF upload + page picker */}
       {inputMode === 'pdf' && (
         <div>
-          <label className="block text-sm font-medium text-wv-text mb-1">
-            Upload a PDF document
-          </label>
           <input
-            ref={fileRef}
+            ref={pdfFileRef}
             type="file"
             accept=".pdf"
+            onChange={e => {
+              onFileChange(e.target.files?.[0] || null)
+              onSelectedPagesChange([])
+            }}
+            className="hidden"
+          />
+
+          {!file ? (
+            <>
+              <label className="block text-[20px] font-medium text-wv-text mb-1">
+                Upload a PDF document
+              </label>
+              <button
+                onClick={() => pdfFileRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={e => handleDrop(e, '.pdf')}
+                className={`w-full px-3 py-6 border-2 border-dashed rounded-xl text-[20px] transition-colors ${
+                  dragging
+                    ? 'border-wv-accent bg-wv-accent-light text-wv-text'
+                    : 'border-wv-border-strong text-wv-muted hover:border-wv-accent hover:text-wv-text'
+                }`}
+              >
+                Click or drag & drop a PDF file
+              </button>
+            </>
+          ) : (
+            <PdfPagePicker
+              file={file}
+              selectedPages={selectedPages}
+              onSelectedPagesChange={onSelectedPagesChange}
+              onRemoveFile={handleRemovePdf}
+            />
+          )}
+        </div>
+      )}
+
+      {/* DOCX upload */}
+      {inputMode === 'docx' && (
+        <div>
+          <label className="block text-[20px] font-medium text-wv-text mb-1">
+            Upload a Word document
+          </label>
+          <input
+            ref={docxFileRef}
+            type="file"
+            accept=".docx"
             onChange={e => onFileChange(e.target.files?.[0] || null)}
             className="hidden"
           />
           <button
-            onClick={() => fileRef.current?.click()}
-            className="w-full px-3 py-6 border-2 border-dashed border-wv-border-strong rounded-xl text-sm text-wv-muted hover:border-wv-accent hover:text-wv-text transition-colors"
+            onClick={() => docxFileRef.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={e => handleDrop(e, '.docx')}
+            className={`w-full px-3 py-6 border-2 border-dashed rounded-xl text-[20px] transition-colors ${
+              dragging
+                ? 'border-wv-accent bg-wv-accent-light text-wv-text'
+                : 'border-wv-border-strong text-wv-muted hover:border-wv-accent hover:text-wv-text'
+            }`}
           >
             {file ? (
               <span className="flex items-center justify-center gap-2">
@@ -103,16 +190,16 @@ export default function ContextInput({
                 {file.name}
               </span>
             ) : (
-              'Click to select a PDF file'
+              'Click or drag & drop a Word file (.docx)'
             )}
           </button>
           {file && (
             <button
               onClick={() => {
                 onFileChange(null)
-                if (fileRef.current) fileRef.current.value = ''
+                if (docxFileRef.current) docxFileRef.current.value = ''
               }}
-              className="text-xs text-wv-red mt-1 hover:underline"
+              className="text-[16px] text-wv-red mt-1 hover:underline"
             >
               Remove file
             </button>
@@ -123,7 +210,7 @@ export default function ContextInput({
       {/* Google Doc URL */}
       {inputMode === 'googleDoc' && (
         <div>
-          <label className="block text-sm font-medium text-wv-text mb-1">
+          <label className="block text-[20px] font-medium text-wv-text mb-1">
             Google Doc link
           </label>
           <input
@@ -131,9 +218,9 @@ export default function ContextInput({
             value={googleDocUrl}
             onChange={e => onGoogleDocUrlChange(e.target.value)}
             placeholder="https://docs.google.com/document/d/..."
-            className="w-full px-3 py-2.5 border border-wv-border rounded-xl text-sm text-wv-text bg-wv-input-bg focus:outline-none focus:ring-2 focus:ring-wv-accent/40 focus:border-wv-accent transition-colors"
+            className="w-full px-3 py-2.5 border border-wv-border rounded-xl text-[20px] text-wv-text bg-wv-input-bg focus:outline-none focus:ring-2 focus:ring-wv-accent/40 focus:border-wv-accent transition-colors"
           />
-          <p className="text-xs text-wv-muted mt-1">
+          <p className="text-[16px] text-wv-muted mt-1">
             Make sure the document is publicly accessible (Anyone with the link)
           </p>
         </div>

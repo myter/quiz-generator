@@ -37,6 +37,7 @@ Rules:
 - For open-ended questions, provide a concise correct answer (what would be accepted as correct).
 - Each question is worth 1 point.
 - Vary difficulty: include easy, medium, and hard questions.
+- IMPORTANT: The quiz MUST be in the same language as the source content. If the content is in French, write all questions, options, and answers in French. If in Spanish, write everything in Spanish. Match the language exactly.
 
 Return a JSON object with this exact schema:
 {

@@ -1,3 +1,5 @@
+import * as pdfjsLib from 'pdfjs-dist'
+import mammoth from 'mammoth'
 import type { QuizConfig, ExtractResponse, CreateQuizResponse } from './types'
 
 let _apiUrl = ''
@@ -10,7 +12,8 @@ export async function extractQuestions(
   content: string,
   file: File | null,
   googleDocUrl: string,
-  config: Pick<QuizConfig, 'numQuestions' | 'questionTypes'>
+  config: Pick<QuizConfig, 'numQuestions' | 'questionTypes'>,
+  selectedPages: number[] = []
 ): Promise<ExtractResponse> {
   const body: Record<string, unknown> = {
     config: {
@@ -19,9 +22,14 @@ export async function extractQuestions(
     },
   }
 
-  if (file) {
-    const base64 = await fileToBase64(file)
-    body.file = base64
+  if (file && file.name.endsWith('.docx')) {
+    // Extract text client-side from DOCX
+    const text = await extractTextFromDocx(file)
+    body.content = text
+  } else if (file && selectedPages.length > 0) {
+    // Extract text client-side from selected PDF pages only
+    const text = await extractTextFromPdf(file, selectedPages)
+    body.content = text
   } else if (googleDocUrl) {
     body.googleDocUrl = googleDocUrl
   } else {
@@ -48,7 +56,7 @@ export async function createQuiz(payload: {
   themeJSON: object
   settings: object
   logicRules?: object[]
-}): Promise<CreateQuizResponse> {
+}): Promise<CreateQuizResponse & { editorUrl: string }> {
   const res = await fetch(`${_apiUrl}/api/create-quiz`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -63,14 +71,47 @@ export async function createQuiz(payload: {
   return res.json()
 }
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = reader.result as string
-      resolve(result.split(',')[1])
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
+export async function createQuizAnon(payload: {
+  name: string
+  formJSON: object
+  themeJSON: object
+  settings: object
+  logicRules?: object[]
+}): Promise<{ formId: string; editorUrl: string }> {
+  const res = await fetch(`${_apiUrl}/api/create-quiz-anon`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `Anon quiz creation failed (${res.status})`)
+  }
+
+  return res.json()
+}
+
+async function extractTextFromPdf(file: File, selectedPages: number[]): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer()
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+
+  const texts: string[] = []
+  for (const pageNum of selectedPages) {
+    if (pageNum > pdf.numPages) continue
+    const page = await pdf.getPage(pageNum)
+    const textContent = await page.getTextContent()
+    const pageText = textContent.items
+      .map((item: any) => item.str)
+      .join(' ')
+    texts.push(pageText)
+  }
+
+  return texts.join('\n\n')
+}
+
+async function extractTextFromDocx(file: File): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer()
+  const result = await mammoth.extractRawText({ arrayBuffer })
+  return result.value
 }

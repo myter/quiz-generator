@@ -1,4 +1,4 @@
-export type InputMode = 'text' | 'pdf' | 'googleDoc'
+export type InputMode = 'text' | 'pdf' | 'docx' | 'googleDoc'
 
 export type QuestionType = 'closed' | 'open' | 'both'
 
@@ -26,6 +26,7 @@ export interface ExtractResponse {
 export interface CreateQuizResponse {
   formId: string
   formUrl: string
+  editorUrl: string
 }
 
 export type WidgetStep = 'input' | 'loading' | 'result' | 'error'

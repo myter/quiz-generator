@@ -18,38 +18,62 @@
   --color-wv-accent-mid: rgba(98, 0, 255, 0.15);
 }
 
-/* Scoped CSS reset — prevents Webflow style leakage */
+/* Scoped CSS reset — prevents Webflow style leakage.
+   We reset common Webflow-overridden properties, then let
+   Tailwind's !important utilities (via @import "tailwindcss" important)
+   apply our own styles on top. */
+#quiz-generator {
+  font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 20px !important;
+  line-height: 1.5 !important;
+  color: #140033 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -webkit-text-size-adjust: 100% !important;
+}
+
 #quiz-generator *,
 #quiz-generator *::before,
 #quiz-generator *::after {
   box-sizing: border-box !important;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font: inherit;
-  font-size: 100%;
-  vertical-align: baseline;
+  font-family: inherit;
+  font-size: inherit;
   line-height: inherit;
   letter-spacing: normal;
   text-transform: none;
+  vertical-align: baseline;
+  -webkit-font-smoothing: inherit;
 }
 
-#quiz-generator {
-  font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #140033;
-  -webkit-font-smoothing: antialiased;
+/* Reset common Webflow element styles */
+#quiz-generator div,
+#quiz-generator span,
+#quiz-generator p,
+#quiz-generator label,
+#quiz-generator h1, #quiz-generator h2, #quiz-generator h3,
+#quiz-generator h4, #quiz-generator h5, #quiz-generator h6 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  color: inherit;
 }
 
 #quiz-generator button {
   cursor: pointer;
   background: none;
   line-height: inherit;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
 }
 
 #quiz-generator select {
   appearance: auto;
+  font-family: inherit;
 }
 
 #quiz-generator a {
@@ -57,41 +81,63 @@
   color: inherit;
 }
 
+#quiz-generator textarea,
+#quiz-generator input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
 /* CTA Glow Button */
 #quiz-generator .cta-glow-wrapper {
   position: relative;
-  border-radius: 12px;
-  padding: 2px;
-  background: linear-gradient(135deg, #00d4ff, #6200ff, #b000ff);
-  box-shadow:
-    0 0 16px rgba(98, 0, 255, 0.2),
-    0 0 32px rgba(0, 212, 255, 0.1);
-  transition: box-shadow 0.3s ease;
+  border-radius: 0.75rem;
+  padding: 3px;
+  background-image: linear-gradient(90deg, #2ad9ff, #6200ff);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+#quiz-generator .cta-glow-wrapper .glow-bg {
+  position: absolute;
+  inset: -4px;
+  border-radius: 1rem;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0.45;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+#quiz-generator .cta-glow-wrapper:hover:not(.disabled) .glow-bg {
+  opacity: 0.7;
 }
 
 #quiz-generator .cta-glow-wrapper:hover:not(.disabled) {
-  box-shadow:
-    0 0 20px rgba(98, 0, 255, 0.35),
-    0 0 40px rgba(0, 212, 255, 0.18);
+  transform: translateY(-1px);
 }
 
 #quiz-generator .cta-glow-wrapper.disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 #quiz-generator .cta-glow-inner {
   display: block;
-  background: white;
-  border-radius: 10px;
+  background: #080331;
+  border-radius: calc(0.75rem - 3px);
   padding: 12px 24px;
   text-align: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.25rem;
   transition: background 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 #quiz-generator .cta-glow-wrapper:hover:not(.disabled) .cta-glow-inner {
-  background: #faf8ff;
+  background: #0d0540;
 }
 
 /* Range slider */
@@ -123,6 +169,30 @@
   cursor: pointer;
   border: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Banner CTA pulse glow */
+@keyframes cta-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(42, 217, 255, 0.4), 0 0 30px rgba(98, 0, 255, 0.3), 0 0 60px rgba(42, 217, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(42, 217, 255, 0.8), 0 0 50px rgba(98, 0, 255, 0.5), 0 0 80px rgba(42, 217, 255, 0.25);
+  }
+}
+
+#quiz-generator .banner-cta-pulse:not(.disabled) {
+  animation: cta-pulse-glow 2s ease-in-out infinite;
+}
+
+/* Banner CTA inner — dark bg for contrast on gradient banner */
+#quiz-generator .banner-cta-pulse .cta-glow-inner {
+  background: #080331;
+  color: #fff;
+}
+
+#quiz-generator .banner-cta-pulse:hover .cta-glow-inner {
+  background: #0d0540;
 }
 
 /* Loading spinner */
