@@ -52,7 +52,21 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] font-satoshi flex flex-col overflow-hidden">
+    <div
+      className="font-satoshi"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: '100dvh',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
       {/* Quiz iframe — fills space above banner */}
       <iframe
         src={formUrl}
