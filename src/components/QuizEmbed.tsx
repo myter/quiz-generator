@@ -43,7 +43,10 @@ export default function QuizEmbed({ formUrl, quizPayload }: Props) {
 
     try {
       const { editorUrl } = await createQuizAnon(quizPayload)
-      window.open(editorUrl, '_blank')
+      const url = new URL(editorUrl)
+      url.searchParams.set('utm_source', 'generator')
+      url.searchParams.set('utm_medium', 'shadow-quiz')
+      window.location.href = url.toString()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create copy')
     } finally {
