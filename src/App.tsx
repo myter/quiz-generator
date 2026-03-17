@@ -149,7 +149,7 @@ export default function App({ apiUrl = '' }: AppProps) {
 
   return (
     <div className="w-full font-satoshi">
-      <div className="bg-wv-card rounded-2xl border border-wv-border p-6 shadow-sm space-y-5">
+      <div className="bg-wv-card rounded-2xl border border-wv-border p-8 sm:p-12 shadow-sm space-y-5">
 
         {isInputStep ? (
           <>
