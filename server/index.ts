@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import extractQuestionsRouter from './routes/extractQuestions.js'
 import createQuizRouter from './routes/createQuiz.js'
+import generateFormRouter from './routes/generateForm.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -12,6 +13,7 @@ app.use(express.json({ limit: '10mb' }))
 
 app.use('/api', extractQuestionsRouter)
 app.use('/api', createQuizRouter)
+app.use('/api', generateFormRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })

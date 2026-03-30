@@ -105,6 +105,24 @@ export async function createQuizAnon(payload: {
   }
 }
 
+export async function generateForm(
+  prompt: string,
+  documentTexts: string[]
+): Promise<{ formJSON: object; themeJSON: object; settings: object }> {
+  const res = await fetch(`${_apiUrl}/api/generate-form`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, documentTexts }),
+  })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `Form generation failed (${res.status})`)
+  }
+
+  return res.json()
+}
+
 async function extractTextFromPdf(file: File, selectedPages: number[]): Promise<string> {
   const arrayBuffer = await file.arrayBuffer()
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise

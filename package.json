@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --mode production",
+    "build": "vite build --mode production && WIDGET=form vite build --mode production --emptyOutDir false",
+    "build:quiz": "vite build --mode production",
+    "build:form": "WIDGET=form vite build --mode production",
     "preview": "vite preview",
     "server": "tsx server/index.ts"
   },
