@@ -74,7 +74,7 @@ The request body is a complete form specification with the following structure:
 
   ```json
   {
-    "mode": "quiz",
+    "type": "quiz",
     "quiz": {
       "instantFeedback": boolean
     },
@@ -952,12 +952,12 @@ Quiz mode turns a form into a scored assessment.
 
 ### Enabling Quiz Mode
 
-Set `settings.mode` to `"quiz"` and optionally configure quiz-specific settings:
+Set `settings.type` to `"quiz"` and optionally configure quiz-specific settings:
 
 ```json
 {
   "settings": {
-    "mode": "quiz",
+    "type": "quiz",
     "quiz": {
       "instantFeedback": true
     }
@@ -967,7 +967,7 @@ Set `settings.mode` to `"quiz"` and optionally configure quiz-specific settings:
 
 | Setting | Type | Description |
 |---|---|---|
-| `mode` | `"quiz"` | Activates quiz mode. Omit for standard form behaviour |
+| `type` | `"quiz"` | Activates quiz mode. Omit for standard form behaviour |
 | `quiz.instantFeedback` | boolean | When `true`, shows correct/incorrect feedback after each question rather than at the end |
 
 ### Quiz-Compatible Element Types

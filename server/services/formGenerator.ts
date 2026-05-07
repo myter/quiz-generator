@@ -97,7 +97,7 @@ Rules:
 - Set "required": true for essential fields
 - Pick a theme preset that fits the form's purpose (e.g. "Frost" for professional, "Ember" for warm/creative, "Nova" for general)
 - IMPORTANT: The form MUST be in the same language as the user's input. If the prompt is in French, write all labels, descriptions, placeholders, and headings in French. Always match the input language exactly.
-- For settings, use mode: "form" (not "quiz"), showProgressBar: true, showValidationErrors: true
+- For settings, use type: "form" (not "quiz"), showProgressBar: true, showValidationErrors: true
 
 Return a JSON object with this exact structure:
 {

@@ -167,7 +167,7 @@ export function buildThemeJSON() {
 
 export function buildSettings(config: QuizConfig) {
   return {
-    mode: 'quiz',
+    type: 'quiz',
     quiz: {
       instantFeedback: config.pageLayout === 'one-per-page',
     },
