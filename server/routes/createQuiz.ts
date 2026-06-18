@@ -10,8 +10,9 @@ router.post('/create-quiz', async (req, res) => {
     const body = req.body as CreateQuizRequest
     const token = process.env.WEAVELY_API_TOKEN
     const teamId = process.env.WEAVELY_TEAM_ID
+    const workspaceId = process.env.WEAVELY_WORKSPACE_ID
 
-    if (!token || !teamId) {
+    if (!token || !teamId || !workspaceId) {
       res.status(500).json({ error: 'Server misconfigured: missing Weavely credentials' })
       return
     }
@@ -30,6 +31,7 @@ router.post('/create-quiz', async (req, res) => {
       body: JSON.stringify({
         name: body.name || 'Generated Quiz',
         teamId,
+        workspaceId,
         publish: true,
         formJSON: body.formJSON,
         themeJSON: body.themeJSON,
